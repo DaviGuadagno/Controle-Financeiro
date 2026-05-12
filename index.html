@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>FinControl — Dashboard Financeiro</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
@@ -20,6 +21,7 @@
 }
 
 :root{
+
   --bg:#0f1117;
   --bg2:#161b26;
   --bg3:#1c2333;
@@ -34,7 +36,6 @@
   --red:#f43f5e;
   --amber:#f59e0b;
 
-  --radius:16px;
 }
 
 body{
@@ -118,15 +119,13 @@ body{
   padding:28px;
 }
 
-/* TOPBAR */
-
 .topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:28px;
-  gap:20px;
   flex-wrap:wrap;
+  gap:20px;
 }
 
 .title{
@@ -143,6 +142,7 @@ body{
   display:flex;
   gap:12px;
   flex-wrap:wrap;
+  align-items:center;
 }
 
 .btn{
@@ -160,13 +160,9 @@ body{
   background:var(--bg3);
 }
 
-.btn-primary{
-  background:var(--accent);
-  border:none;
-}
-
-.btn-primary:hover{
-  opacity:.9;
+.btn-success{
+  background:rgba(34,197,94,.15);
+  color:#7dffab;
 }
 
 .btn-danger{
@@ -174,9 +170,14 @@ body{
   color:#ff8fa2;
 }
 
-.btn-success{
-  background:rgba(34,197,94,.15);
-  color:#7dffab;
+.select-month{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:white;
+  padding:12px 18px;
+  border-radius:14px;
+  outline:none;
+  font-weight:600;
 }
 
 /* METRICS */
@@ -204,11 +205,6 @@ body{
 .metric-value{
   font-size:30px;
   font-weight:700;
-}
-
-.metric-sub{
-  margin-top:10px;
-  font-size:13px;
 }
 
 /* GRID */
@@ -239,7 +235,6 @@ body{
   background:var(--bg3);
   padding:14px;
   border-radius:14px;
-  gap:14px;
 }
 
 .transaction-left{
@@ -275,6 +270,23 @@ body{
 .neg{
   color:var(--red);
   font-weight:700;
+}
+
+/* PLACEHOLDER */
+
+.placeholder{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:30px;
+}
+
+.placeholder h2{
+  margin-bottom:10px;
+}
+
+.placeholder p{
+  color:var(--muted);
 }
 
 /* RESPONSIVO */
@@ -329,45 +341,47 @@ body{
 </div>
 
 <div>
+
 <div class="brand-title">
 FinControl
 </div>
 
 <div class="brand-sub">
-Davi · 2026
+Firebase Edition
 </div>
+
 </div>
 
 </div>
 
 <nav class="nav">
 
-<a href="#" class="nav-item active">
+<a href="#" class="nav-item active" data-section="dashboard">
 <i class="ti ti-layout-dashboard"></i>
 Dashboard
 </a>
 
-<a href="#" class="nav-item">
+<a href="#" class="nav-item" data-section="financas">
 <i class="ti ti-wallet"></i>
 Finanças
 </a>
 
-<a href="#" class="nav-item">
+<a href="#" class="nav-item" data-section="lancamentos">
 <i class="ti ti-list-details"></i>
 Lançamentos
 </a>
 
-<a href="#" class="nav-item">
+<a href="#" class="nav-item" data-section="cartoes">
 <i class="ti ti-credit-card"></i>
 Cartões
 </a>
 
-<a href="#" class="nav-item">
+<a href="#" class="nav-item" data-section="metas">
 <i class="ti ti-target"></i>
 Metas
 </a>
 
-<a href="#" class="nav-item">
+<a href="#" class="nav-item" data-section="configuracoes">
 <i class="ti ti-settings"></i>
 Configurações
 </a>
@@ -384,38 +398,84 @@ Configurações
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
-<script>
+<script type="module">
 
-document.addEventListener("DOMContentLoaded", () => {
+// ==========================================
+// FIREBASE
+// ==========================================
 
-const main = document.getElementById("mainContent");
+import { initializeApp }
 
-// ====================
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+serverTimestamp
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ==========================================
+// CONFIG FIREBASE
+// ==========================================
+
+const firebaseConfig = {
+
+apiKey: "SUA_API_KEY",
+
+authDomain: "SEU_PROJETO.firebaseapp.com",
+
+projectId: "SEU_PROJECT_ID",
+
+storageBucket: "SEU_PROJETO.appspot.com",
+
+messagingSenderId: "SEU_SENDER_ID",
+
+appId: "SEU_APP_ID"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+// ==========================================
 // DADOS
-// ====================
+// ==========================================
 
 let receitas = [];
 let despesas = [];
 let financeChart = null;
 
-// ====================
+let mesSelecionado =
+new Date().getMonth() + 1;
+
+const main =
+document.getElementById("mainContent");
+
+// ==========================================
 // FORMATADOR
-// ====================
+// ==========================================
 
 function money(value){
 
 return value.toLocaleString("pt-BR",{
+
 style:"currency",
 currency:"BRL"
+
 });
 
 }
 
-// ====================
+// ==========================================
 // DASHBOARD
-// ====================
+// ==========================================
 
-const dashboardContent = `
+const dashboardHTML = `
 
 <div class="topbar">
 
@@ -426,12 +486,29 @@ Dashboard Financeiro
 </div>
 
 <div class="subtitle">
-Resumo financeiro mensal
+Controle financeiro em tempo real
 </div>
 
 </div>
 
 <div class="actions">
+
+<select id="monthSelector" class="select-month">
+
+<option value="1">Janeiro</option>
+<option value="2">Fevereiro</option>
+<option value="3">Março</option>
+<option value="4">Abril</option>
+<option value="5">Maio</option>
+<option value="6">Junho</option>
+<option value="7">Julho</option>
+<option value="8">Agosto</option>
+<option value="9">Setembro</option>
+<option value="10">Outubro</option>
+<option value="11">Novembro</option>
+<option value="12">Dezembro</option>
+
+</select>
 
 <button class="btn btn-success" id="addReceita">
 <i class="ti ti-plus"></i>
@@ -452,7 +529,7 @@ Nova Despesa
 <div class="card">
 
 <div class="metric-title">
-Receita do mês
+Receitas
 </div>
 
 <div class="metric-value" id="receitaTotal">
@@ -531,19 +608,123 @@ Nenhum lançamento cadastrado
 
 `;
 
-main.innerHTML = dashboardContent;
+// ==========================================
+// LOAD DASHBOARD
+// ==========================================
 
-// ====================
-// DASHBOARD UPDATE
-// ====================
+function loadDashboard(){
+
+main.innerHTML = dashboardHTML;
+
+document.getElementById("monthSelector").value =
+mesSelecionado;
+
+initMonthSelector();
+initButtons();
+initChart();
+updateDashboard();
+
+}
+
+// ==========================================
+// MONTH SELECTOR
+// ==========================================
+
+function initMonthSelector(){
+
+const selector =
+document.getElementById("monthSelector");
+
+selector.addEventListener("change",()=>{
+
+mesSelecionado =
+Number(selector.value);
+
+updateDashboard();
+
+});
+
+}
+
+// ==========================================
+// FIREBASE SAVE
+// ==========================================
+
+async function salvarLancamento(
+tipo,
+nome,
+valor,
+data
+){
+
+const mes =
+Number(data.split("/")[1]);
+
+await addDoc(collection(db,"lancamentos"),{
+
+tipo,
+nome,
+valor,
+data,
+mes,
+createdAt:serverTimestamp()
+
+});
+
+}
+
+// ==========================================
+// FIREBASE LOAD
+// ==========================================
+
+async function carregarLancamentos(){
+
+receitas = [];
+despesas = [];
+
+const querySnapshot =
+await getDocs(collection(db,"lancamentos"));
+
+querySnapshot.forEach((doc)=>{
+
+const item = doc.data();
+
+if(item.tipo === "receita"){
+
+receitas.push(item);
+
+}else{
+
+despesas.push(item);
+
+}
+
+});
+
+updateDashboard();
+
+}
+
+// ==========================================
+// UPDATE DASHBOARD
+// ==========================================
 
 function updateDashboard(){
 
+if(!document.getElementById("receitaTotal"))
+return;
+
+const receitasMes =
+receitas.filter(r=>r.mes === mesSelecionado);
+
+const despesasMes =
+despesas.filter(d=>d.mes === mesSelecionado);
+
 const totalReceitas =
-receitas.reduce((a,b)=>a+b.valor,0);
+receitasMes.reduce((a,b)=>a+b.valor,0);
 
 const totalDespesas =
-despesas.reduce((a,b)=>a+b.valor,0);
+despesasMes.reduce((a,b)=>a+b.valor,0);
 
 const saldo =
 totalReceitas - totalDespesas;
@@ -558,27 +739,38 @@ document.getElementById("saldoTotal").innerText =
 money(saldo);
 
 document.getElementById("totalLancamentos").innerText =
-receitas.length + despesas.length;
+receitasMes.length + despesasMes.length;
 
-renderTransactions();
-updateChart();
+renderTransactions(
+receitasMes,
+despesasMes
+);
+
+updateChart(
+totalReceitas,
+totalDespesas
+);
 
 }
 
-// ====================
-// TRANSAÇÕES
-// ====================
+// ==========================================
+// TRANSACTIONS
+// ==========================================
 
-function renderTransactions(){
+function renderTransactions(
+receitasMes,
+despesasMes
+){
 
 const container =
 document.getElementById("transactionsList");
 
+if(!container) return;
+
 const all = [
 
-...receitas.map(r=>({...r,tipo:"receita"})),
-
-...despesas.map(d=>({...d,tipo:"despesa"}))
+...receitasMes.map(r=>({...r,tipo:"receita"})),
+...despesasMes.map(d=>({...d,tipo:"despesa"}))
 
 ];
 
@@ -586,7 +778,7 @@ if(all.length === 0){
 
 container.innerHTML = `
 <div style="color:var(--muted)">
-Nenhum lançamento cadastrado
+Nenhum lançamento neste mês
 </div>
 `;
 
@@ -605,9 +797,13 @@ container.innerHTML += `
 <div class="transaction-left">
 
 <div class="transaction-icon">
+
 <i class="ti ${item.tipo === "receita"
+
 ? "ti-arrow-up"
+
 : "ti-arrow-down"}"></i>
+
 </div>
 
 <div>
@@ -625,7 +821,9 @@ ${item.data}
 </div>
 
 <div class="${item.tipo === "receita"
+
 ? "pos"
+
 : "neg"}">
 
 ${item.tipo === "receita" ? "+" : "-"}
@@ -642,9 +840,9 @@ ${money(item.valor)}
 
 }
 
-// ====================
-// BOTÕES
-// ====================
+// ==========================================
+// BUTTONS
+// ==========================================
 
 function initButtons(){
 
@@ -654,7 +852,11 @@ document.getElementById("addReceita");
 const despesaBtn =
 document.getElementById("addDespesa");
 
-receitaBtn.addEventListener("click",()=>{
+// ==========================================
+// RECEITA
+// ==========================================
+
+receitaBtn.addEventListener("click",async()=>{
 
 const nome =
 prompt("Nome da receita:");
@@ -666,19 +868,30 @@ Number(prompt("Valor da receita:"));
 
 if(!valor) return;
 
-receitas.push({
+const dataInput =
+prompt(
+"Data da receita (dd/mm/aaaa):",
+new Date().toLocaleDateString("pt-BR")
+);
 
+if(!dataInput) return;
+
+await salvarLancamento(
+"receita",
 nome,
 valor,
-data:new Date().toLocaleDateString("pt-BR")
+dataInput
+);
+
+await carregarLancamentos();
 
 });
 
-updateDashboard();
+// ==========================================
+// DESPESA
+// ==========================================
 
-});
-
-despesaBtn.addEventListener("click",()=>{
+despesaBtn.addEventListener("click",async()=>{
 
 const nome =
 prompt("Nome da despesa:");
@@ -690,78 +903,57 @@ Number(prompt("Valor da despesa:"));
 
 if(!valor) return;
 
-despesas.push({
+const dataInput =
+prompt(
+"Data da despesa (dd/mm/aaaa):",
+new Date().toLocaleDateString("pt-BR")
+);
 
+if(!dataInput) return;
+
+await salvarLancamento(
+"despesa",
 nome,
 valor,
-data:new Date().toLocaleDateString("pt-BR")
+dataInput
+);
 
-});
-
-updateDashboard();
+await carregarLancamentos();
 
 });
 
 }
 
-// ====================
+// ==========================================
 // CHART
-// ====================
+// ==========================================
 
 function initChart(){
 
 const canvas =
 document.getElementById("financeChart");
 
+if(!canvas) return;
+
 const ctx =
 canvas.getContext("2d");
 
-const gradient =
-ctx.createLinearGradient(0,0,0,300);
-
-gradient.addColorStop(0,"rgba(79,124,255,.4)");
-gradient.addColorStop(1,"rgba(79,124,255,0)");
-
 financeChart = new Chart(ctx, {
 
-type:"line",
+type:"bar",
 
 data:{
 
 labels:[
-"Jan",
-"Fev",
-"Mar",
-"Abr",
-"Mai",
-"Jun"
+"Receitas",
+"Despesas"
 ],
 
-datasets:[
+datasets:[{
 
-{
-label:"Receitas",
-data:[0,0,0,0,0,0],
-borderColor:"#4f7cff",
-backgroundColor:gradient,
-fill:true,
-tension:.4,
-pointRadius:0,
-borderWidth:3
-},
+data:[0,0]
 
-{
-label:"Despesas",
-data:[0,0,0,0,0,0],
-borderColor:"#f43f5e",
-fill:false,
-tension:.4,
-pointRadius:0,
-borderWidth:2,
-borderDash:[6,6]
-}
-
-]
+}]
 
 },
 
@@ -771,9 +963,7 @@ responsive:true,
 
 plugins:{
 legend:{
-labels:{
-color:"#fff"
-}
+display:false
 }
 },
 
@@ -805,37 +995,33 @@ color:"rgba(255,255,255,.05)"
 
 }
 
-// ====================
+// ==========================================
 // UPDATE CHART
-// ====================
+// ==========================================
 
-function updateChart(){
+function updateChart(
+receitas,
+despesas
+){
 
-const totalReceitas =
-receitas.reduce((a,b)=>a+b.valor,0);
+if(!financeChart) return;
 
-const totalDespesas =
-despesas.reduce((a,b)=>a+b.valor,0);
-
-financeChart.data.datasets[0].data =
-[0,0,0,0,0,totalReceitas];
-
-financeChart.data.datasets[1].data =
-[0,0,0,0,0,totalDespesas];
+financeChart.data.datasets[0].data = [
+receitas,
+despesas
+];
 
 financeChart.update();
 
 }
 
-// ====================
+// ==========================================
 // INIT
-// ====================
+// ==========================================
 
-initChart();
-initButtons();
-updateDashboard();
+loadDashboard();
 
-});
+carregarLancamentos();
 
 </script>
 
