@@ -277,207 +277,6 @@ body{
   font-weight:700;
 }
 
-/* FINANÇAS */
-
-.finance-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.finance-item{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  border:1px solid rgba(255,255,255,.04);
-}
-
-.finance-top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:8px;
-  gap:20px;
-}
-
-.finance-category{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.finance-description{
-  color:#cfd5e3;
-  margin-top:10px;
-  font-size:14px;
-}
-
-/* FORM */
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:20px;
-}
-
-.form-group{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.form-group.full{
-  grid-column:1 / -1;
-}
-
-label{
-  font-size:13px;
-  color:var(--muted);
-}
-
-input,
-select,
-textarea{
-  background:var(--bg3);
-  border:1px solid var(--border);
-  color:white;
-  padding:14px;
-  border-radius:12px;
-  outline:none;
-  font-family:'DM Sans',sans-serif;
-}
-
-textarea{
-  resize:none;
-  min-height:100px;
-}
-
-/* METAS */
-
-.goal-card{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.goal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
-
-.goal-progress{
-  width:100%;
-  height:14px;
-  background:#11151f;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.goal-fill{
-  height:100%;
-  background:var(--accent);
-}
-
-.goal-actions{
-  display:flex;
-  gap:10px;
-  margin-bottom:24px;
-}
-
-/* CARTÕES */
-
-.card-finance{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.card-header-flex{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:20px;
-}
-
-.card-buttons{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.small-btn{
-  padding:8px 12px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:600;
-  color:white;
-}
-
-.edit-btn{
-  background:rgba(79,124,255,.15);
-  color:#8fb2ff;
-}
-
-.invoice-btn{
-  background:rgba(245,158,11,.15);
-  color:#ffd58f;
-}
-
-.card-info{
-  margin-top:14px;
-  color:var(--muted);
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-/* LANÇAMENTOS */
-
-.launch-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.launch-table th{
-  text-align:left;
-  padding:14px;
-  background:var(--bg3);
-  color:var(--muted);
-  font-size:13px;
-}
-
-.launch-table td{
-  padding:16px 14px;
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-
-.launch-table tr:hover{
-  background:rgba(255,255,255,.02);
-}
-
-.badge{
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:600;
-  display:inline-block;
-}
-
-.badge-income{
-  background:rgba(34,197,94,.15);
-  color:#7dffab;
-}
-
-.badge-expense{
-  background:rgba(244,63,94,.15);
-  color:#ff8fa2;
-}
-
 /* RESPONSIVO */
 
 @media(max-width:1000px){
@@ -487,10 +286,6 @@ textarea{
   }
 
   .grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-grid{
     grid-template-columns:1fr;
   }
 
@@ -512,11 +307,6 @@ textarea{
 
   .main{
     padding:16px;
-  }
-
-  .launch-table{
-    display:block;
-    overflow-x:auto;
   }
 
 }
@@ -588,9 +378,44 @@ Configurações
 
 <!-- MAIN -->
 
-<main class="main" id="mainContent">
+<main class="main" id="mainContent"></main>
 
-<!-- DASHBOARD -->
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+const main = document.getElementById("mainContent");
+
+// ====================
+// DADOS
+// ====================
+
+let receitas = [];
+let despesas = [];
+let financeChart = null;
+
+// ====================
+// FORMATADOR
+// ====================
+
+function money(value){
+
+return value.toLocaleString("pt-BR",{
+style:"currency",
+currency:"BRL"
+});
+
+}
+
+// ====================
+// DASHBOARD
+// ====================
+
+const dashboardContent = `
 
 <div class="topbar">
 
@@ -608,22 +433,14 @@ Resumo financeiro mensal
 
 <div class="actions">
 
-<button class="btn btn-success">
+<button class="btn btn-success" id="addReceita">
 <i class="ti ti-plus"></i>
 Nova Receita
 </button>
 
-<button class="btn btn-danger">
+<button class="btn btn-danger" id="addDespesa">
 <i class="ti ti-minus"></i>
 Nova Despesa
-</button>
-
-<button class="btn">
-Junho 2026
-</button>
-
-<button class="btn" id="alertBtn">
-<i class="ti ti-bell"></i>
 </button>
 
 </div>
@@ -638,12 +455,8 @@ Junho 2026
 Receita do mês
 </div>
 
-<div class="metric-value">
-R$ 3.630
-</div>
-
-<div class="metric-sub" style="color:var(--green)">
-+12% este mês
+<div class="metric-value" id="receitaTotal">
+R$ 0,00
 </div>
 
 </div>
@@ -654,12 +467,8 @@ R$ 3.630
 Despesas
 </div>
 
-<div class="metric-value">
-R$ 2.735
-</div>
-
-<div class="metric-sub" style="color:var(--red)">
-75% da receita
+<div class="metric-value" id="despesaTotal">
+R$ 0,00
 </div>
 
 </div>
@@ -670,12 +479,8 @@ R$ 2.735
 Saldo
 </div>
 
-<div class="metric-value">
-R$ 894
-</div>
-
-<div class="metric-sub" style="color:var(--accent)">
-Saldo projetado
+<div class="metric-value" id="saldoTotal">
+R$ 0,00
 </div>
 
 </div>
@@ -683,15 +488,11 @@ Saldo projetado
 <div class="card">
 
 <div class="metric-title">
-Cartões
+Lançamentos
 </div>
 
-<div class="metric-value">
-R$ 1.039
-</div>
-
-<div class="metric-sub" style="color:var(--amber)">
-5 cartões ativos
+<div class="metric-value" id="totalLancamentos">
+0
 </div>
 
 </div>
@@ -716,614 +517,190 @@ Evolução Financeira
 Últimos Lançamentos
 </div>
 
-<div class="transactions">
+<div class="transactions" id="transactionsList">
+
+<div style="color:var(--muted)">
+Nenhum lançamento cadastrado
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+main.innerHTML = dashboardContent;
+
+// ====================
+// DASHBOARD UPDATE
+// ====================
+
+function updateDashboard(){
+
+const totalReceitas =
+receitas.reduce((a,b)=>a+b.valor,0);
+
+const totalDespesas =
+despesas.reduce((a,b)=>a+b.valor,0);
+
+const saldo =
+totalReceitas - totalDespesas;
+
+document.getElementById("receitaTotal").innerText =
+money(totalReceitas);
+
+document.getElementById("despesaTotal").innerText =
+money(totalDespesas);
+
+document.getElementById("saldoTotal").innerText =
+money(saldo);
+
+document.getElementById("totalLancamentos").innerText =
+receitas.length + despesas.length;
+
+renderTransactions();
+updateChart();
+
+}
+
+// ====================
+// TRANSAÇÕES
+// ====================
+
+function renderTransactions(){
+
+const container =
+document.getElementById("transactionsList");
+
+const all = [
+
+...receitas.map(r=>({...r,tipo:"receita"})),
+
+...despesas.map(d=>({...d,tipo:"despesa"}))
+
+];
+
+if(all.length === 0){
+
+container.innerHTML = `
+<div style="color:var(--muted)">
+Nenhum lançamento cadastrado
+</div>
+`;
+
+return;
+
+}
+
+container.innerHTML = "";
+
+all.reverse().forEach(item=>{
+
+container.innerHTML += `
 
 <div class="transaction">
 
 <div class="transaction-left">
 
 <div class="transaction-icon">
-<i class="ti ti-building-bank"></i>
+<i class="ti ${item.tipo === "receita"
+? "ti-arrow-up"
+: "ti-arrow-down"}"></i>
 </div>
 
 <div>
+
 <div class="transaction-name">
-Salário
+${item.nome}
 </div>
 
 <div class="transaction-date">
-03 Abr 2026
+${item.data}
 </div>
-</div>
-
-</div>
-
-<div class="pos">
-+R$ 2.815
-</div>
-
-</div>
-
-<div class="transaction">
-
-<div class="transaction-left">
-
-<div class="transaction-icon">
-<i class="ti ti-shopping-cart"></i>
-</div>
-
-<div>
-<div class="transaction-name">
-Mercado
-</div>
-
-<div class="transaction-date">
-07 Abr 2026
-</div>
-</div>
-
-</div>
-
-<div class="neg">
--R$ 135
-</div>
-
-</div>
-
-<div class="transaction">
-
-<div class="transaction-left">
-
-<div class="transaction-icon">
-<i class="ti ti-device-mobile"></i>
-</div>
-
-<div>
-<div class="transaction-name">
-Telefone
-</div>
-
-<div class="transaction-date">
-11 Abr 2026
-</div>
-</div>
-
-</div>
-
-<div class="neg">
--R$ 342
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-const main = document.getElementById("mainContent");
-
-const dashboardContent = main.innerHTML;
-
-// ====================
-// SEÇÕES
-// ====================
-
-const sections = {
-
-dashboard: dashboardContent,
-
-financas: `
-
-<div class="title" style="margin-bottom:10px">
-Finanças
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Controle detalhado de receitas e despesas
-</div>
-
-<div class="finance-list">
-
-<div class="finance-item">
-
-<div class="finance-top">
-<div>
-<div class="transaction-name">Salário</div>
-<div class="finance-category">Receita fixa</div>
-</div>
-
-<div class="pos">+R$ 2.815</div>
-</div>
-
-<div class="finance-description">
-Pagamento mensal recebido da empresa.
-</div>
-
-</div>
-
-<div class="finance-item">
-
-<div class="finance-top">
-<div>
-<div class="transaction-name">Mercado Guanabara</div>
-<div class="finance-category">Despesa variável</div>
-</div>
-
-<div class="neg">-R$ 135</div>
-</div>
-
-<div class="finance-description">
-Compra de alimentos e itens domésticos.
-</div>
-
-</div>
-
-<div class="finance-item">
-
-<div class="finance-top">
-<div>
-<div class="transaction-name">Telefone</div>
-<div class="finance-category">Despesa parcelada</div>
-</div>
-
-<div class="neg">-R$ 342</div>
-</div>
-
-<div class="finance-description">
-Parcela 9 de 18 do aparelho celular.
-</div>
-
-</div>
-
-</div>
-
-<div class="card" style="margin-top:24px">
-
-<div class="card-title">
-Cadastrar novo lançamento
-</div>
-
-<div class="form-grid">
-
-<div class="form-group">
-<label>Tipo</label>
-<select>
-<option>Receita</option>
-<option>Despesa</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Classificação</label>
-<select id="tipoLancamento">
-<option>Fixa</option>
-<option>Variável</option>
-<option>Parcelada</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Quantidade de parcelas</label>
-<input type="number" placeholder="Ex: 12">
-</div>
-
-<div class="form-group">
-<label>Data</label>
-<input type="date">
-</div>
-
-<div class="form-group full">
-<label>Descrição</label>
-<input type="text" placeholder="Digite a descrição">
-</div>
-
-<div class="form-group">
-<label>Categoria</label>
-<select>
-<option>Salário</option>
-<option>Mercado</option>
-<option>Investimento</option>
-<option>Conta</option>
-<option>Lazer</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Conta / Cartão</label>
-<select>
-<option>Nubank</option>
-<option>PicPay</option>
-<option>Inter</option>
-<option>Conta Corrente</option>
-</select>
-</div>
-
-<div class="form-group full">
-<button class="btn btn-primary">
-Salvar lançamento
-</button>
-</div>
-
-</div>
 
 </div>
 
-`,
-
-lancamentos: `
-
-<div class="title" style="margin-bottom:10px">
-Lançamentos
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Todos os lançamentos do mês
-</div>
-
-<div class="card">
-
-<table class="launch-table">
-
-<thead>
-<tr>
-<th>Data</th>
-<th>Descrição</th>
-<th>Categoria</th>
-<th>Tipo</th>
-<th>Valor</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>03/06/2026</td>
-<td>Salário</td>
-<td>Receita</td>
-<td>
-<span class="badge badge-income">
-Entrada
-</span>
-</td>
-<td class="pos">
-+R$ 2.815,14
-</td>
-</tr>
-
-<tr>
-<td>05/06/2026</td>
-<td>Wide FTV</td>
-<td>Freelance</td>
-<td>
-<span class="badge badge-income">
-Entrada
-</span>
-</td>
-<td class="pos">
-+R$ 262,50
-</td>
-</tr>
-
-<tr>
-<td>07/06/2026</td>
-<td>Mercado Guanabara</td>
-<td>Mercado</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 135,36
-</td>
-</tr>
-
-<tr>
-<td>08/06/2026</td>
-<td>Nubank Empréstimo</td>
-<td>Conta</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 241,32
-</td>
-</tr>
-
-<tr>
-<td>11/06/2026</td>
-<td>Telefone</td>
-<td>Parcelado</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 342,00
-</td>
-</tr>
-
-<tr>
-<td>12/06/2026</td>
-<td>Sunomono</td>
-<td>Restaurante</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 192,50
-</td>
-</tr>
-
-<tr>
-<td>15/06/2026</td>
-<td>Depósito Investimento</td>
-<td>Investimento</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 300,00
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-`,
-
-cartoes: `
-
-<div class="title" style="margin-bottom:10px">
-Cartões
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Gestão de cartões
-</div>
-
-<div class="card-finance">
-
-<div class="card-header-flex">
-
-<div>
-<div class="transaction-name">Nubank</div>
-<div class="transaction-date">Cartão principal</div>
-</div>
-
-<div class="card-buttons">
-<button class="small-btn edit-btn">
-<i class="ti ti-edit"></i>
-Editar
-</button>
-
-<button class="small-btn invoice-btn">
-<i class="ti ti-file-invoice"></i>
-Fatura
-</button>
-</div>
-
-</div>
-
-<div class="card-info">
-<div>Fatura atual: <strong style="color:#ff8fa2">R$ 400</strong></div>
-<div>Vencimento: 10/06/2026</div>
-<div>Limite disponível: R$ 2.100</div>
-</div>
-
-</div>
-
-<div class="card-finance">
-
-<div class="card-header-flex">
-
-<div>
-<div class="transaction-name">PicPay</div>
-<div class="transaction-date">Uso diário</div>
-</div>
-
-<div class="card-buttons">
-<button class="small-btn edit-btn">
-<i class="ti ti-edit"></i>
-Editar
-</button>
-
-<button class="small-btn invoice-btn">
-<i class="ti ti-file-invoice"></i>
-Fatura
-</button>
-</div>
-
-</div>
-
-<div class="card-info">
-<div>Fatura atual: <strong style="color:#ff8fa2">R$ 463</strong></div>
-<div>Vencimento: 15/06/2026</div>
-<div>Limite disponível: R$ 1.500</div>
-</div>
-
-</div>
-
-`,
-
-metas: `
-
-<div class="title" style="margin-bottom:10px">
-Metas
 </div>
 
-<div class="subtitle" style="margin-bottom:30px">
-Objetivos financeiros
-</div>
-
-<div class="goal-actions">
-
-<button class="btn btn-success">
-<i class="ti ti-plus"></i>
-Nova Meta
-</button>
-
-<button class="btn btn-danger">
-<i class="ti ti-trash"></i>
-Excluir Meta
-</button>
-
-</div>
-
-<div class="goal-card">
-
-<div class="goal-header">
-<strong>Bike Elétrica</strong>
-<div>43%</div>
-</div>
-
-<div class="goal-progress">
-<div class="goal-fill" style="width:43%"></div>
-</div>
-
-<div style="margin-top:14px;color:#7a8096">
-R$ 574/mês
-</div>
-
-</div>
-
-<div class="goal-card">
-
-<div class="goal-header">
-<strong>Reserva de Emergência</strong>
-<div>68%</div>
-</div>
-
-<div class="goal-progress">
-<div class="goal-fill" style="width:68%;background:#22c55e"></div>
-</div>
-
-<div style="margin-top:14px;color:#7a8096">
-Meta de R$ 10.000
-</div>
-
-</div>
-
-`,
-
-configuracoes: `
-
-<div class="title" style="margin-bottom:10px">
-Configurações
-</div>
+<div class="${item.tipo === "receita"
+? "pos"
+: "neg"}">
 
-<div class="subtitle" style="margin-bottom:30px">
-Preferências do sistema
-</div>
-
-<div class="card">
-
-<div style="margin-bottom:20px">
-Tema escuro: Ativado
-</div>
+${item.tipo === "receita" ? "+" : "-"}
 
-<div style="margin-bottom:20px">
-Notificações: Ativadas
-</div>
+${money(item.valor)}
 
-<div>
-Conta: Davi
 </div>
 
 </div>
-
-`
-
-};
-
-// ====================
-// MENU
-// ====================
-
-const navItems = document.querySelectorAll(".nav-item");
-
-navItems.forEach(item => {
-
-item.addEventListener("click", (e) => {
-
-e.preventDefault();
-
-navItems.forEach(i => {
-i.classList.remove("active");
-});
-
-item.classList.add("active");
-
-const text = item.innerText.trim().toLowerCase();
-
-if(text.includes("dashboard")){
-main.innerHTML = sections.dashboard;
-initChart();
-}
-
-if(text.includes("finanças")){
-main.innerHTML = sections.financas;
-}
-
-if(text.includes("lançamentos")){
-main.innerHTML = sections.lancamentos;
-}
-
-if(text.includes("cartões")){
-main.innerHTML = sections.cartoes;
-}
-
-if(text.includes("metas")){
-main.innerHTML = sections.metas;
-}
-
-if(text.includes("configurações")){
-main.innerHTML = sections.configuracoes;
-}
-
-});
-
-});
-
-// ====================
-// ALERTA
-// ====================
-
-function initAlert(){
-
-const btn = document.getElementById("alertBtn");
-
-if(btn){
-
-btn.addEventListener("click", () => {
 
-alert("Você possui notificações pendentes.");
+`;
 
 });
 
 }
+
+// ====================
+// BOTÕES
+// ====================
+
+function initButtons(){
+
+const receitaBtn =
+document.getElementById("addReceita");
+
+const despesaBtn =
+document.getElementById("addDespesa");
+
+receitaBtn.addEventListener("click",()=>{
+
+const nome =
+prompt("Nome da receita:");
+
+if(!nome) return;
+
+const valor =
+Number(prompt("Valor da receita:"));
+
+if(!valor) return;
+
+receitas.push({
+
+nome,
+valor,
+data:new Date().toLocaleDateString("pt-BR")
+
+});
+
+updateDashboard();
+
+});
+
+despesaBtn.addEventListener("click",()=>{
+
+const nome =
+prompt("Nome da despesa:");
+
+if(!nome) return;
+
+const valor =
+Number(prompt("Valor da despesa:"));
+
+if(!valor) return;
+
+despesas.push({
+
+nome,
+valor,
+data:new Date().toLocaleDateString("pt-BR")
+
+});
+
+updateDashboard();
+
+});
 
 }
 
@@ -1333,18 +710,19 @@ alert("Você possui notificações pendentes.");
 
 function initChart(){
 
-const canvas = document.getElementById("financeChart");
+const canvas =
+document.getElementById("financeChart");
 
-if(!canvas) return;
+const ctx =
+canvas.getContext("2d");
 
-const ctx = canvas.getContext("2d");
-
-const gradient = ctx.createLinearGradient(0,0,0,300);
+const gradient =
+ctx.createLinearGradient(0,0,0,300);
 
 gradient.addColorStop(0,"rgba(79,124,255,.4)");
 gradient.addColorStop(1,"rgba(79,124,255,0)");
 
-new Chart(ctx, {
+financeChart = new Chart(ctx, {
 
 type:"line",
 
@@ -1363,7 +741,7 @@ datasets:[
 
 {
 label:"Receitas",
-data:[3100,2800,3700,4200,3600,3630],
+data:[0,0,0,0,0,0],
 borderColor:"#4f7cff",
 backgroundColor:gradient,
 fill:true,
@@ -1374,7 +752,7 @@ borderWidth:3
 
 {
 label:"Despesas",
-data:[2900,3100,3200,3400,3100,2735],
+data:[0,0,0,0,0,0],
 borderColor:"#f43f5e",
 fill:false,
 tension:.4,
@@ -1425,11 +803,37 @@ color:"rgba(255,255,255,.05)"
 
 });
 
-initAlert();
+}
+
+// ====================
+// UPDATE CHART
+// ====================
+
+function updateChart(){
+
+const totalReceitas =
+receitas.reduce((a,b)=>a+b.valor,0);
+
+const totalDespesas =
+despesas.reduce((a,b)=>a+b.valor,0);
+
+financeChart.data.datasets[0].data =
+[0,0,0,0,0,totalReceitas];
+
+financeChart.data.datasets[1].data =
+[0,0,0,0,0,totalDespesas];
+
+financeChart.update();
 
 }
 
+// ====================
+// INIT
+// ====================
+
 initChart();
+initButtons();
+updateDashboard();
 
 });
 
