@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FinControl — Dashboard Financeiro</title>
+<title>FinControl — Login</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
@@ -20,6 +22,7 @@
 }
 
 :root{
+
   --bg:#0f1117;
   --bg2:#161b26;
   --bg3:#1c2333;
@@ -30,1406 +33,493 @@
   --border:rgba(255,255,255,.07);
 
   --accent:#4f7cff;
+  --accent2:#7b5cfa;
+
   --green:#22c55e;
   --red:#f43f5e;
-  --amber:#f59e0b;
 
-  --radius:16px;
+  --radius:18px;
+
 }
 
 body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'DM Sans',sans-serif;
-}
 
-.shell{
-  display:grid;
-  grid-template-columns:240px 1fr;
+  background:linear-gradient(135deg,#0f1117,#161b26);
   min-height:100vh;
-}
 
-/* SIDEBAR */
-
-.sidebar{
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  padding:20px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:30px;
-}
-
-.brand-icon{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#4f7cff,#7b5cfa);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:20px;
+
+  font-family:'DM Sans',sans-serif;
+  color:var(--text);
+
+  overflow:hidden;
+
 }
 
-.brand-title{
-  font-size:18px;
-  font-weight:700;
+/* FUNDO */
+
+.bg-effect{
+
+  position:absolute;
+
+  width:500px;
+  height:500px;
+
+  border-radius:50%;
+
+  filter:blur(50px);
+
+  z-index:0;
+
 }
 
-.brand-sub{
-  font-size:12px;
-  color:var(--muted);
+.bg1{
+
+  top:-150px;
+  left:-150px;
+
+  background:rgba(79,124,255,.18);
+
 }
 
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.bg2{
+
+  bottom:-150px;
+  right:-150px;
+
+  background:rgba(123,92,250,.18);
+
 }
 
-.nav-item{
-  padding:14px;
-  border-radius:14px;
-  text-decoration:none;
-  color:var(--muted);
+/* LOGIN */
+
+.login-box{
+
+  width:100%;
+  max-width:430px;
+
+  background:rgba(22,27,38,.95);
+
+  border:1px solid var(--border);
+
+  border-radius:30px;
+
+  padding:42px;
+
+  position:relative;
+  z-index:1;
+
+  backdrop-filter:blur(16px);
+
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+
+}
+
+.logo{
+
+  width:78px;
+  height:78px;
+
+  border-radius:24px;
+
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+
   display:flex;
   align-items:center;
-  gap:10px;
-  transition:.2s;
-}
+  justify-content:center;
 
-.nav-item:hover{
-  background:rgba(255,255,255,.04);
+  margin:0 auto 26px;
+
+  font-size:34px;
   color:white;
-}
 
-.nav-item.active{
-  background:rgba(79,124,255,.15);
-  color:var(--accent);
-}
-
-/* MAIN */
-
-.main{
-  padding:28px;
-}
-
-/* TOPBAR */
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:28px;
-  gap:20px;
-  flex-wrap:wrap;
 }
 
 .title{
-  font-size:28px;
+
+  text-align:center;
+
+  font-size:34px;
   font-weight:700;
+
+  margin-bottom:10px;
+
 }
 
 .subtitle{
+
+  text-align:center;
+
   color:var(--muted);
-  margin-top:6px;
+
+  line-height:1.6;
+
+  margin-bottom:34px;
+
 }
 
-.actions{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.btn{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  color:white;
-  padding:12px 18px;
-  border-radius:14px;
-  cursor:pointer;
-  transition:.2s;
-  font-weight:600;
-}
-
-.btn:hover{
-  background:var(--bg3);
-}
-
-.btn-primary{
-  background:var(--accent);
-  border:none;
-}
-
-.btn-primary:hover{
-  opacity:.9;
-}
-
-.btn-danger{
-  background:rgba(244,63,94,.15);
-  color:#ff8fa2;
-}
-
-.btn-success{
-  background:rgba(34,197,94,.15);
-  color:#7dffab;
-}
-
-/* METRICS */
-
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:20px;
-}
-
-.card{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:20px;
-}
-
-.metric-title{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:12px;
-}
-
-.metric-value{
-  font-size:30px;
-  font-weight:700;
-}
-
-.metric-sub{
-  margin-top:10px;
-  font-size:13px;
-}
-
-/* GRID */
-
-.grid{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
-}
-
-.card-title{
-  font-size:18px;
-  margin-bottom:20px;
-}
-
-/* TRANSACTIONS */
-
-.transactions{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.transaction{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:var(--bg3);
-  padding:14px;
-  border-radius:14px;
-  gap:14px;
-}
-
-.transaction-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.transaction-icon{
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  background:rgba(255,255,255,.05);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.transaction-name{
-  font-weight:600;
-}
-
-.transaction-date{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.pos{
-  color:var(--green);
-  font-weight:700;
-}
-
-.neg{
-  color:var(--red);
-  font-weight:700;
-}
-
-/* FINANÇAS */
-
-.finance-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.finance-item{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  border:1px solid rgba(255,255,255,.04);
-}
-
-.finance-top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:8px;
-  gap:20px;
-}
-
-.finance-category{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.finance-description{
-  color:#cfd5e3;
-  margin-top:10px;
-  font-size:14px;
-}
-
-/* FORM */
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:20px;
-}
+/* INPUTS */
 
 .form-group{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+  margin-bottom:20px;
 }
 
-.form-group.full{
-  grid-column:1 / -1;
+.label{
+
+  display:block;
+
+  margin-bottom:10px;
+
+  font-size:14px;
+  font-weight:600;
+
 }
 
-label{
-  font-size:13px;
+.input-wrap{
+
+  position:relative;
+
+}
+
+.input-wrap i{
+
+  position:absolute;
+
+  top:50%;
+  left:16px;
+
+  transform:translateY(-50%);
+
   color:var(--muted);
+
+  font-size:18px;
+
 }
 
-input,
-select,
-textarea{
-  background:var(--bg3);
-  border:1px solid var(--border);
-  color:white;
-  padding:14px;
-  border-radius:12px;
-  outline:none;
-  font-family:'DM Sans',sans-serif;
-}
+.input{
 
-textarea{
-  resize:none;
-  min-height:100px;
-}
-
-/* METAS */
-
-.goal-card{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.goal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
-
-.goal-progress{
   width:100%;
-  height:14px;
-  background:#11151f;
-  border-radius:999px;
-  overflow:hidden;
-}
+  height:58px;
 
-.goal-fill{
-  height:100%;
-  background:var(--accent);
-}
-
-.goal-actions{
-  display:flex;
-  gap:10px;
-  margin-bottom:24px;
-}
-
-/* CARTÕES */
-
-.card-finance{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.card-header-flex{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:20px;
-}
-
-.card-buttons{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.small-btn{
-  padding:8px 12px;
   border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:600;
-  color:white;
-}
 
-.edit-btn{
-  background:rgba(79,124,255,.15);
-  color:#8fb2ff;
-}
-
-.invoice-btn{
-  background:rgba(245,158,11,.15);
-  color:#ffd58f;
-}
-
-.card-info{
-  margin-top:14px;
-  color:var(--muted);
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-/* LANÇAMENTOS */
-
-.launch-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.launch-table th{
-  text-align:left;
-  padding:14px;
   background:var(--bg3);
-  color:var(--muted);
-  font-size:13px;
+
+  border:1px solid var(--border);
+
+  border-radius:16px;
+
+  padding-left:50px;
+  padding-right:16px;
+
+  color:white;
+
+  font-size:15px;
+
+  transition:.2s;
+
 }
 
-.launch-table td{
-  padding:16px 14px;
-  border-bottom:1px solid rgba(255,255,255,.05);
+.input:focus{
+
+  outline:none;
+
+  border-color:var(--accent);
+
+  box-shadow:0 0 0 4px rgba(79,124,255,.15);
+
 }
 
-.launch-table tr:hover{
-  background:rgba(255,255,255,.02);
+/* BOTÃO */
+
+.login-btn{
+
+  width:100%;
+  height:58px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+
+  color:white;
+
+  font-size:16px;
+  font-weight:700;
+
+  cursor:pointer;
+
+  margin-top:8px;
+
+  transition:.2s;
+
 }
 
-.badge{
-  padding:6px 10px;
-  border-radius:999px;
+.login-btn:hover{
+
+  transform:translateY(-2px);
+
+  opacity:.95;
+
+}
+
+/* ALERTAS */
+
+.error{
+
+  display:none;
+
+  margin-top:18px;
+
+  background:rgba(244,63,94,.12);
+
+  border:1px solid rgba(244,63,94,.2);
+
+  color:var(--red);
+
+  padding:14px;
+
+  border-radius:14px;
+
+  font-size:14px;
+
+}
+
+.success{
+
+  display:none;
+
+  margin-top:18px;
+
+  background:rgba(34,197,94,.12);
+
+  border:1px solid rgba(34,197,94,.2);
+
+  color:var(--green);
+
+  padding:14px;
+
+  border-radius:14px;
+
+  font-size:14px;
+
+}
+
+/* DEMO */
+
+.demo{
+
+  margin-top:26px;
+
+  background:rgba(255,255,255,.03);
+
+  border:1px solid var(--border);
+
+  border-radius:18px;
+
+  padding:18px;
+
+}
+
+.demo-title{
+
   font-size:12px;
-  font-weight:600;
-  display:inline-block;
+
+  text-transform:uppercase;
+
+  letter-spacing:.08em;
+
+  color:var(--muted);
+
+  margin-bottom:14px;
+
 }
 
-.badge-income{
-  background:rgba(34,197,94,.15);
-  color:#7dffab;
+.demo-line{
+
+  margin-bottom:10px;
+
+  font-size:14px;
+
 }
 
-.badge-expense{
-  background:rgba(244,63,94,.15);
-  color:#ff8fa2;
+.footer{
+
+  margin-top:30px;
+
+  text-align:center;
+
+  color:var(--muted);
+
+  font-size:13px;
+
 }
 
 /* RESPONSIVO */
 
-@media(max-width:1000px){
+@media(max-width:500px){
 
-  .metrics{
-    grid-template-columns:1fr 1fr;
+  .login-box{
+
+    margin:20px;
+    padding:30px;
+
   }
 
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:700px){
-
-  .shell{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    display:none;
-  }
-
-  .metrics{
-    grid-template-columns:1fr;
-  }
-
-  .main{
-    padding:16px;
-  }
-
-  .launch-table{
-    display:block;
-    overflow-x:auto;
+  .title{
+    font-size:28px;
   }
 
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="shell">
+<div class="bg-effect bg1"></div>
+<div class="bg-effect bg2"></div>
 
-<!-- SIDEBAR -->
+<div class="login-box">
 
-<aside class="sidebar">
-
-<div class="brand">
-
-<div class="brand-icon">
+<div class="logo">
 <i class="ti ti-chart-pie-filled"></i>
 </div>
 
-<div>
-<div class="brand-title">
+<div class="title">
 FinControl
 </div>
 
-<div class="brand-sub">
-Davi · 2026
-</div>
-</div>
-
-</div>
-
-<nav class="nav">
-
-<a href="#" class="nav-item active">
-<i class="ti ti-layout-dashboard"></i>
-Dashboard
-</a>
-
-<a href="#" class="nav-item">
-<i class="ti ti-wallet"></i>
-Finanças
-</a>
-
-<a href="#" class="nav-item">
-<i class="ti ti-list-details"></i>
-Lançamentos
-</a>
-
-<a href="#" class="nav-item">
-<i class="ti ti-credit-card"></i>
-Cartões
-</a>
-
-<a href="#" class="nav-item">
-<i class="ti ti-target"></i>
-Metas
-</a>
-
-<a href="#" class="nav-item">
-<i class="ti ti-settings"></i>
-Configurações
-</a>
-
-</nav>
-
-</aside>
-
-<!-- MAIN -->
-
-<main class="main" id="mainContent">
-
-<!-- DASHBOARD -->
-
-<div class="topbar">
-
-<div>
-
-<div class="title">
-Dashboard Financeiro
-</div>
-
 <div class="subtitle">
-Resumo financeiro mensal
+Acesse seu painel financeiro inteligente
+</div>
+
+<form id="loginForm">
+
+<div class="form-group">
+
+<label class="label">
+E-mail
+</label>
+
+<div class="input-wrap">
+
+<i class="ti ti-mail"></i>
+
+<input 
+type="email" 
+class="input" 
+id="email"
+placeholder="Digite seu e-mail"
+required
+>
+
 </div>
 
 </div>
 
-<div class="actions">
+<div class="form-group">
 
-<button class="btn btn-success">
-<i class="ti ti-plus"></i>
-Nova Receita
+<label class="label">
+Senha
+</label>
+
+<div class="input-wrap">
+
+<i class="ti ti-lock"></i>
+
+<input 
+type="password" 
+class="input" 
+id="password"
+placeholder="Digite sua senha"
+required
+>
+
+</div>
+
+</div>
+
+<button type="submit" class="login-btn">
+Entrar no Sistema
 </button>
 
-<button class="btn btn-danger">
-<i class="ti ti-minus"></i>
-Nova Despesa
-</button>
+<div class="error" id="errorBox">
+E-mail ou senha inválidos.
+</div>
 
-<button class="btn">
-Junho 2026
-</button>
+<div class="success" id="successBox">
+Login realizado com sucesso! Redirecionando...
+</div>
 
-<button class="btn" id="alertBtn">
-<i class="ti ti-bell"></i>
-</button>
+</form>
 
+<div class="demo">
+
+<div class="demo-title">
+Credenciais de acesso
+</div>
+
+<div class="demo-line">
+<strong>Login:</strong> daviguadagno30@gmail.com
+</div>
+
+<div class="demo-line">
+<strong>Senha:</strong> Tiagodavi20@
 </div>
 
 </div>
 
-<div class="metrics">
-
-<div class="card">
-
-<div class="metric-title">
-Receita do mês
-</div>
-
-<div class="metric-value">
-R$ 3.630
-</div>
-
-<div class="metric-sub" style="color:var(--green)">
-+12% este mês
+<div class="footer">
+FinControl © 2026 — Sistema Financeiro
 </div>
 
 </div>
-
-<div class="card">
-
-<div class="metric-title">
-Despesas
-</div>
-
-<div class="metric-value">
-R$ 2.735
-</div>
-
-<div class="metric-sub" style="color:var(--red)">
-75% da receita
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="metric-title">
-Saldo
-</div>
-
-<div class="metric-value">
-R$ 894
-</div>
-
-<div class="metric-sub" style="color:var(--accent)">
-Saldo projetado
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="metric-title">
-Cartões
-</div>
-
-<div class="metric-value">
-R$ 1.039
-</div>
-
-<div class="metric-sub" style="color:var(--amber)">
-5 cartões ativos
-</div>
-
-</div>
-
-</div>
-
-<div class="grid">
-
-<div class="card">
-
-<div class="card-title">
-Evolução Financeira
-</div>
-
-<canvas id="financeChart"></canvas>
-
-</div>
-
-<div class="card">
-
-<div class="card-title">
-Últimos Lançamentos
-</div>
-
-<div class="transactions">
-
-<div class="transaction">
-
-<div class="transaction-left">
-
-<div class="transaction-icon">
-<i class="ti ti-building-bank"></i>
-</div>
-
-<div>
-<div class="transaction-name">
-Salário
-</div>
-
-<div class="transaction-date">
-03 Abr 2026
-</div>
-</div>
-
-</div>
-
-<div class="pos">
-+R$ 2.815
-</div>
-
-</div>
-
-<div class="transaction">
-
-<div class="transaction-left">
-
-<div class="transaction-icon">
-<i class="ti ti-shopping-cart"></i>
-</div>
-
-<div>
-<div class="transaction-name">
-Mercado
-</div>
-
-<div class="transaction-date">
-07 Abr 2026
-</div>
-</div>
-
-</div>
-
-<div class="neg">
--R$ 135
-</div>
-
-</div>
-
-<div class="transaction">
-
-<div class="transaction-left">
-
-<div class="transaction-icon">
-<i class="ti ti-device-mobile"></i>
-</div>
-
-<div>
-<div class="transaction-name">
-Telefone
-</div>
-
-<div class="transaction-date">
-11 Abr 2026
-</div>
-</div>
-
-</div>
-
-<div class="neg">
--R$ 342
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", () => {
+const form = document.getElementById("loginForm");
 
-const main = document.getElementById("mainContent");
+const errorBox = document.getElementById("errorBox");
 
-const dashboardContent = main.innerHTML;
+const successBox = document.getElementById("successBox");
 
-// ====================
-// SEÇÕES
-// ====================
+form.addEventListener("submit", function(e){
 
-const sections = {
+  e.preventDefault();
 
-dashboard: dashboardContent,
+  const email = document.getElementById("email").value.trim();
 
-financas: `
+  const password = document.getElementById("password").value.trim();
 
-<div class="title" style="margin-bottom:10px">
-Finanças
-</div>
+  const validEmail = "daviguadagno30@gmail.com";
 
-<div class="subtitle" style="margin-bottom:30px">
-Controle detalhado de receitas e despesas
-</div>
+  const validPassword = "Tiagodavi20@";
 
-<div class="finance-list">
+  errorBox.style.display = "none";
+  successBox.style.display = "none";
 
-<div class="finance-item">
+  if(email === validEmail && password === validPassword){
 
-<div class="finance-top">
-<div>
-<div class="transaction-name">Salário</div>
-<div class="finance-category">Receita fixa</div>
-</div>
+    successBox.style.display = "block";
 
-<div class="pos">+R$ 2.815</div>
-</div>
+    localStorage.setItem("fincontrol_logged","true");
 
-<div class="finance-description">
-Pagamento mensal recebido da empresa.
-</div>
+    setTimeout(() => {
 
-</div>
+      window.location.href = "index.html";
 
-<div class="finance-item">
+    }, 1200);
 
-<div class="finance-top">
-<div>
-<div class="transaction-name">Mercado Guanabara</div>
-<div class="finance-category">Despesa variável</div>
-</div>
+  }else{
 
-<div class="neg">-R$ 135</div>
-</div>
+    errorBox.style.display = "block";
 
-<div class="finance-description">
-Compra de alimentos e itens domésticos.
-</div>
-
-</div>
-
-<div class="finance-item">
-
-<div class="finance-top">
-<div>
-<div class="transaction-name">Telefone</div>
-<div class="finance-category">Despesa parcelada</div>
-</div>
-
-<div class="neg">-R$ 342</div>
-</div>
-
-<div class="finance-description">
-Parcela 9 de 18 do aparelho celular.
-</div>
-
-</div>
-
-</div>
-
-<div class="card" style="margin-top:24px">
-
-<div class="card-title">
-Cadastrar novo lançamento
-</div>
-
-<div class="form-grid">
-
-<div class="form-group">
-<label>Tipo</label>
-<select>
-<option>Receita</option>
-<option>Despesa</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Classificação</label>
-<select id="tipoLancamento">
-<option>Fixa</option>
-<option>Variável</option>
-<option>Parcelada</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Quantidade de parcelas</label>
-<input type="number" placeholder="Ex: 12">
-</div>
-
-<div class="form-group">
-<label>Data</label>
-<input type="date">
-</div>
-
-<div class="form-group full">
-<label>Descrição</label>
-<input type="text" placeholder="Digite a descrição">
-</div>
-
-<div class="form-group">
-<label>Categoria</label>
-<select>
-<option>Salário</option>
-<option>Mercado</option>
-<option>Investimento</option>
-<option>Conta</option>
-<option>Lazer</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Conta / Cartão</label>
-<select>
-<option>Nubank</option>
-<option>PicPay</option>
-<option>Inter</option>
-<option>Conta Corrente</option>
-</select>
-</div>
-
-<div class="form-group full">
-<button class="btn btn-primary">
-Salvar lançamento
-</button>
-</div>
-
-</div>
-
-</div>
-
-`,
-
-lancamentos: `
-
-<div class="title" style="margin-bottom:10px">
-Lançamentos
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Todos os lançamentos do mês
-</div>
-
-<div class="card">
-
-<table class="launch-table">
-
-<thead>
-<tr>
-<th>Data</th>
-<th>Descrição</th>
-<th>Categoria</th>
-<th>Tipo</th>
-<th>Valor</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>03/06/2026</td>
-<td>Salário</td>
-<td>Receita</td>
-<td>
-<span class="badge badge-income">
-Entrada
-</span>
-</td>
-<td class="pos">
-+R$ 2.815,14
-</td>
-</tr>
-
-<tr>
-<td>05/06/2026</td>
-<td>Wide FTV</td>
-<td>Freelance</td>
-<td>
-<span class="badge badge-income">
-Entrada
-</span>
-</td>
-<td class="pos">
-+R$ 262,50
-</td>
-</tr>
-
-<tr>
-<td>07/06/2026</td>
-<td>Mercado Guanabara</td>
-<td>Mercado</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 135,36
-</td>
-</tr>
-
-<tr>
-<td>08/06/2026</td>
-<td>Nubank Empréstimo</td>
-<td>Conta</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 241,32
-</td>
-</tr>
-
-<tr>
-<td>11/06/2026</td>
-<td>Telefone</td>
-<td>Parcelado</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 342,00
-</td>
-</tr>
-
-<tr>
-<td>12/06/2026</td>
-<td>Sunomono</td>
-<td>Restaurante</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 192,50
-</td>
-</tr>
-
-<tr>
-<td>15/06/2026</td>
-<td>Depósito Investimento</td>
-<td>Investimento</td>
-<td>
-<span class="badge badge-expense">
-Saída
-</span>
-</td>
-<td class="neg">
--R$ 300,00
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-`,
-
-cartoes: `
-
-<div class="title" style="margin-bottom:10px">
-Cartões
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Gestão de cartões
-</div>
-
-<div class="card-finance">
-
-<div class="card-header-flex">
-
-<div>
-<div class="transaction-name">Nubank</div>
-<div class="transaction-date">Cartão principal</div>
-</div>
-
-<div class="card-buttons">
-<button class="small-btn edit-btn">
-<i class="ti ti-edit"></i>
-Editar
-</button>
-
-<button class="small-btn invoice-btn">
-<i class="ti ti-file-invoice"></i>
-Fatura
-</button>
-</div>
-
-</div>
-
-<div class="card-info">
-<div>Fatura atual: <strong style="color:#ff8fa2">R$ 400</strong></div>
-<div>Vencimento: 10/06/2026</div>
-<div>Limite disponível: R$ 2.100</div>
-</div>
-
-</div>
-
-<div class="card-finance">
-
-<div class="card-header-flex">
-
-<div>
-<div class="transaction-name">PicPay</div>
-<div class="transaction-date">Uso diário</div>
-</div>
-
-<div class="card-buttons">
-<button class="small-btn edit-btn">
-<i class="ti ti-edit"></i>
-Editar
-</button>
-
-<button class="small-btn invoice-btn">
-<i class="ti ti-file-invoice"></i>
-Fatura
-</button>
-</div>
-
-</div>
-
-<div class="card-info">
-<div>Fatura atual: <strong style="color:#ff8fa2">R$ 463</strong></div>
-<div>Vencimento: 15/06/2026</div>
-<div>Limite disponível: R$ 1.500</div>
-</div>
-
-</div>
-
-`,
-
-metas: `
-
-<div class="title" style="margin-bottom:10px">
-Metas
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Objetivos financeiros
-</div>
-
-<div class="goal-actions">
-
-<button class="btn btn-success">
-<i class="ti ti-plus"></i>
-Nova Meta
-</button>
-
-<button class="btn btn-danger">
-<i class="ti ti-trash"></i>
-Excluir Meta
-</button>
-
-</div>
-
-<div class="goal-card">
-
-<div class="goal-header">
-<strong>Bike Elétrica</strong>
-<div>43%</div>
-</div>
-
-<div class="goal-progress">
-<div class="goal-fill" style="width:43%"></div>
-</div>
-
-<div style="margin-top:14px;color:#7a8096">
-R$ 574/mês
-</div>
-
-</div>
-
-<div class="goal-card">
-
-<div class="goal-header">
-<strong>Reserva de Emergência</strong>
-<div>68%</div>
-</div>
-
-<div class="goal-progress">
-<div class="goal-fill" style="width:68%;background:#22c55e"></div>
-</div>
-
-<div style="margin-top:14px;color:#7a8096">
-Meta de R$ 10.000
-</div>
-
-</div>
-
-`,
-
-configuracoes: `
-
-<div class="title" style="margin-bottom:10px">
-Configurações
-</div>
-
-<div class="subtitle" style="margin-bottom:30px">
-Preferências do sistema
-</div>
-
-<div class="card">
-
-<div style="margin-bottom:20px">
-Tema escuro: Ativado
-</div>
-
-<div style="margin-bottom:20px">
-Notificações: Ativadas
-</div>
-
-<div>
-Conta: Davi
-</div>
-
-</div>
-
-`
-
-};
-
-// ====================
-// MENU
-// ====================
-
-const navItems = document.querySelectorAll(".nav-item");
-
-navItems.forEach(item => {
-
-item.addEventListener("click", (e) => {
-
-e.preventDefault();
-
-navItems.forEach(i => {
-i.classList.remove("active");
-});
-
-item.classList.add("active");
-
-const text = item.innerText.trim().toLowerCase();
-
-if(text.includes("dashboard")){
-main.innerHTML = sections.dashboard;
-initChart();
-}
-
-if(text.includes("finanças")){
-main.innerHTML = sections.financas;
-}
-
-if(text.includes("lançamentos")){
-main.innerHTML = sections.lancamentos;
-}
-
-if(text.includes("cartões")){
-main.innerHTML = sections.cartoes;
-}
-
-if(text.includes("metas")){
-main.innerHTML = sections.metas;
-}
-
-if(text.includes("configurações")){
-main.innerHTML = sections.configuracoes;
-}
-
-});
-
-});
-
-// ====================
-// ALERTA
-// ====================
-
-function initAlert(){
-
-const btn = document.getElementById("alertBtn");
-
-if(btn){
-
-btn.addEventListener("click", () => {
-
-alert("Você possui notificações pendentes.");
-
-});
-
-}
-
-}
-
-// ====================
-// CHART
-// ====================
-
-function initChart(){
-
-const canvas = document.getElementById("financeChart");
-
-if(!canvas) return;
-
-const ctx = canvas.getContext("2d");
-
-const gradient = ctx.createLinearGradient(0,0,0,300);
-
-gradient.addColorStop(0,"rgba(79,124,255,.4)");
-gradient.addColorStop(1,"rgba(79,124,255,0)");
-
-new Chart(ctx, {
-
-type:"line",
-
-data:{
-
-labels:[
-"Jan",
-"Fev",
-"Mar",
-"Abr",
-"Mai",
-"Jun"
-],
-
-datasets:[
-
-{
-label:"Receitas",
-data:[3100,2800,3700,4200,3600,3630],
-borderColor:"#4f7cff",
-backgroundColor:gradient,
-fill:true,
-tension:.4,
-pointRadius:0,
-borderWidth:3
-},
-
-{
-label:"Despesas",
-data:[2900,3100,3200,3400,3100,2735],
-borderColor:"#f43f5e",
-fill:false,
-tension:.4,
-pointRadius:0,
-borderWidth:2,
-borderDash:[6,6]
-}
-
-]
-
-},
-
-options:{
-
-responsive:true,
-
-plugins:{
-legend:{
-labels:{
-color:"#fff"
-}
-}
-},
-
-scales:{
-
-x:{
-ticks:{
-color:"#7a8096"
-},
-grid:{
-color:"rgba(255,255,255,.05)"
-}
-},
-
-y:{
-ticks:{
-color:"#7a8096"
-},
-grid:{
-color:"rgba(255,255,255,.05)"
-}
-}
-
-}
-
-}
-
-});
-
-initAlert();
-
-}
-
-initChart();
+  }
 
 });
 
