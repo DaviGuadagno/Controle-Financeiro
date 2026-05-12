@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinControl — Dashboard Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f1117;
+      --bg2:      #161b26;
+      --bg3:      #1c2333;
+      --border:   rgba(255,255,255,.07);
+      --border2:  rgba(255,255,255,.13);
+      --text:     #e8eaf0;
+      --muted:    #7a8096;
+      --accent:   #4f7cff;
+      --accent2:  #7b5cfa;
+      --green:    #22c55e;
+      --red:      #f43f5e;
+      --amber:    #f59e0b;
+      --teal:     #14b8a6;
+      --font:     'DM Sans', sans-serif;
+      --mono:     'DM Mono', monospace;
+      --radius:   10px;
+      --radius-lg:16px;
+      --sidebar-w:220px;
+      --topbar-h: 60px;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout Shell ── */
+    .shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      grid-template-rows: var(--topbar-h) 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      grid-row: 1 / 3;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 20px 20px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff;
+      flex-shrink: 0;
+    }
+    .brand-name { font-size: 16px; font-weight: 600; letter-spacing: -.2px; }
+    .brand-user { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      padding: 18px 20px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 20px;
+      font-size: 13.5px;
+      color: var(--muted);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+      text-decoration: none;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .nav-item.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(79,124,255,.1);
+      font-weight: 500;
+    }
+    .nav-item i { font-size: 17px; flex-shrink: 0; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      gap: 12px;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .topbar-title { font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
+    .topbar-subtitle { font-size: 12px; color: var(--muted); }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .month-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 7px 13px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: border-color .15s;
+    }
+    .month-btn:hover { border-color: rgba(255,255,255,.25); }
+
+    .alert-btn {
+      position: relative;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 18px;
+      transition: color .15s;
+    }
+    .alert-btn:hover { color: var(--text); }
+    .alert-dot {
+      position: absolute;
+      top: 7px; right: 7px;
+      width: 7px; height: 7px;
+      background: var(--red);
+      border-radius: 50%;
+      border: 1.5px solid var(--bg2);
+    }
+
+    .avatar {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: #fff;
+      cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ── Main Content ── */
+    .main {
+      padding: 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      background: var(--bg);
+    }
+
+    /* ── Metric Cards ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      cursor: default;
+      animation: fadeUp .4s ease both;
+    }
+    .metric-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-color, var(--accent));
+      opacity: .7;
+    }
+
+    .mc-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .mc-value {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -.5px;
+      font-family: var(--mono);
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .mc-sub {
+      font-size: 12px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .mc-sub.up   { color: var(--green); }
+    .mc-sub.down { color: var(--red); }
+    .mc-sub.warn { color: var(--amber); }
+    .mc-sub.info { color: var(--accent); }
+
+    .mc-icon {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 34px; height: 34px;
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+
+    /* ── Section Row ── */
+    .section-row {
+      display: grid;
+      gap: 14px;
+    }
+    .col-2 { grid-template-columns: 1fr 1fr; }
+    .col-3 { grid-template-columns: 2fr 1fr; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      animation: fadeUp .4s ease both;
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 13.5px; font-weight: 600;
+    }
+    .card-action {
+      font-size: 12px; color: var(--accent);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      text-decoration: none;
+    }
+    .card-action:hover { opacity: .8; }
+
+    /* ── Bar Chart ── */
+    .bar-list { display: flex; flex-direction: column; gap: 12px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; }
+    .bar-lbl {
+      width: 120px; font-size: 12.5px; color: var(--muted);
+      flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .8s cubic-bezier(.23,1,.32,1);
+    }
+    .bar-val {
+      width: 72px; text-align: right;
+      font-size: 12.5px; font-weight: 500;
+      font-family: var(--mono);
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .bar-pct {
+      width: 34px; text-align: right;
+      font-size: 11px; color: var(--muted); flex-shrink: 0;
+    }
+
+    /* ── Transaction List ── */
+    .txn-list { display: flex; flex-direction: column; }
+    .txn-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      transition: background .15s;
+      cursor: pointer;
+    }
+    .txn-item:last-child { border-bottom: none; }
+    .txn-item:hover { background: rgba(255,255,255,.02); margin: 0 -8px; padding: 10px 8px; border-radius: 8px; }
+
+    .txn-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .txn-icon {
+      width: 34px; height: 34px;
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .txn-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .txn-date { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .txn-right { text-align: right; flex-shrink: 0; }
+    .txn-val { font-size: 13.5px; font-weight: 600; font-family: var(--mono); }
+    .txn-val.neg { color: var(--red); }
+    .txn-val.pos { color: var(--green); }
+    .txn-val.invest { color: var(--teal); }
+
+    /* ── Status Pills ── */
+    .pill {
+      font-size: 10.5px; font-weight: 500;
+      padding: 3px 9px; border-radius: 99px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .pill-open   { background: rgba(245,158,11,.15);  color: var(--amber); }
+    .pill-paid   { background: rgba(34,197,94,.12);   color: var(--green); }
+    .pill-late   { background: rgba(244,63,94,.15);   color: var(--red); }
+    .pill-invest { background: rgba(20,184,166,.12);  color: var(--teal); }
+    .pill-soon   { background: rgba(79,124,255,.15);  color: var(--accent); }
+
+    /* ── Credit Cards ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .cc-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color .2s;
+      cursor: pointer;
+    }
+    .cc-item:hover { border-color: var(--border2); }
+    .cc-name { font-size: 12px; color: var(--muted); }
+    .cc-val { font-size: 14px; font-weight: 600; font-family: var(--mono); }
+    .cc-val.zero { color: var(--green); }
+    .cc-val.debt { color: var(--red); }
+    .cc-total {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cc-total-lbl { font-size: 12px; color: var(--muted); }
+    .cc-total-val { font-size: 15px; font-weight: 600; font-family: var(--mono); color: var(--red); }
+
+    /* ── Progress Rings ── */
+    .ring-list { display: flex; flex-direction: column; gap: 16px; }
+    .ring-row { display: flex; align-items: center; gap: 14px; }
+    .ring-svg-wrap { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
+    .ring-svg-wrap svg { transform: rotate(-90deg); overflow: visible; }
+    .ring-center {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; font-family: var(--mono);
+      color: var(--text);
+    }
+    .ring-info { flex: 1; min-width: 0; }
+    .ring-title { font-size: 13px; font-weight: 500; }
+    .ring-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Balance Chart (canvas) ── */
+    .chart-wrap {
+      position: relative;
+      height: 160px;
+      margin-top: 4px;
+    }
+
+    /* ── Donut Legend ── */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .donut-canvas { flex-shrink: 0; }
+    .donut-legend { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px;
+    }
+    .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { color: var(--muted); flex: 1; }
+    .legend-val { font-weight: 500; font-family: var(--mono); color: var(--text); }
+    .legend-pct { color: var(--muted); font-size: 11px; min-width: 32px; text-align: right; }
+
+    /* ── Separator ── */
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .metric-card:nth-child(1) { animation-delay: .05s; }
+    .metric-card:nth-child(2) { animation-delay: .10s; }
+    .metric-card:nth-child(3) { animation-delay: .15s; }
+    .metric-card:nth-child(4) { animation-delay: .20s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .col-2 { grid-template-columns: 1fr; }
+      .col-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      .main { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="ti ti-chart-pie-filled"></i></div>
+      <div>
+        <div class="brand-name">FinControl</div>
+        <div class="brand-user">Davi · 2026</div>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Principal</div>
+    <a class="nav-item active" href="#">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-receipt-2"></i> Lançamentos
+    </a>
+
+    <div class="nav-section-label">Gestão</div>
+    <a class="nav-item" href="#">
+      <i class="ti ti-arrow-up-circle"></i> Receitas
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-arrow-down-circle"></i> Despesas
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-credit-card"></i> Cartões
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-building-bank"></i> Contas
+    </a>
+
+    <div class="nav-section-label">Metas</div>
+    <a class="nav-item" href="#">
+      <i class="ti ti-target"></i> Depósito Meta
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-trending-up"></i> Investimentos
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-pig-money"></i> Poupança
+    </a>
+
+    <div class="nav-section-label">Sistema</div>
+    <a class="nav-item" href="#">
+      <i class="ti ti-report-analytics"></i> Relatórios
+    </a>
+    <a class="nav-item" href="#">
+      <i class="ti ti-settings"></i> Configurações
+    </a>
+
+    <div class="sidebar-footer">
+      <div style="font-size:11px">Último acesso</div>
+      <div style="font-size:12px;color:var(--text);margin-top:2px">Hoje, 09:41</div>
+    </div>
+  </aside>
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Visão Geral Financeira</div>
+        <div class="topbar-subtitle">Dashboard — Junho 2026</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="month-btn">
+        <i class="ti ti-calendar" style="font-size:15px;color:var(--accent)"></i>
+        Junho 2026
+        <i class="ti ti-chevron-down" style="font-size:13px;color:var(--muted)"></i>
+      </button>
+      <div class="alert-btn" title="3 itens atrasados">
+        <i class="ti ti-bell"></i>
+        <span class="alert-dot"></span>
+      </div>
+      <div class="avatar" title="Davi">D</div>
+    </div>
+  </header>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <main class="main">
+
+    <!-- Metric Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card" style="--accent-color: var(--green)">
+        <div class="mc-icon" style="background:rgba(34,197,94,.1);color:var(--green)">
+          <i class="ti ti-arrow-up-circle"></i>
+        </div>
+        <div class="mc-label">Receita do Mês</div>
+        <div class="mc-value">R$ 3.630</div>
+        <div class="mc-sub warn">
+          <i class="ti ti-clock" style="font-size:12px"></i>
+          R$ 3.630 em aberto
+        </div>
+      </div>
+
+      <div class="metric-card" style="--accent-color: var(--red)">
+        <div class="mc-icon" style="background:rgba(244,63,94,.1);color:var(--red)">
+          <i class="ti ti-arrow-down-circle"></i>
+        </div>
+        <div class="mc-label">Despesas Abertas</div>
+        <div class="mc-value">R$ 2.735</div>
+        <div class="mc-sub down">
+          <i class="ti ti-arrow-up" style="font-size:12px"></i>
+          75,3% da receita bruta
+        </div>
+      </div>
+
+      <div class="metric-card" style="--accent-color: var(--accent)">
+        <div class="mc-icon" style="background:rgba(79,124,255,.1);color:var(--accent)">
+          <i class="ti ti-wallet"></i>
+        </div>
+        <div class="mc-label">Saldo Projetado</div>
+        <div class="mc-value">R$ 894</div>
+        <div class="mc-sub up">
+          <i class="ti ti-check" style="font-size:12px"></i>
+          Após quitar tudo
+        </div>
+      </div>
+
+      <div class="metric-card" style="--accent-color: var(--amber)">
+        <div class="mc-icon" style="background:rgba(245,158,11,.1);color:var(--amber)">
+          <i class="ti ti-credit-card"></i>
+        </div>
+        <div class="mc-label">Dívidas Cartões</div>
+        <div class="mc-value">R$ 1.039</div>
+        <div class="mc-sub down">
+          <i class="ti ti-cards" style="font-size:12px"></i>
+          5 cartões com saldo
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Despesas por categoria + Próximos vencimentos -->
+    <div class="section-row col-2">
+
+      <!-- Despesas por categoria -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Despesas por Categoria</div>
+          <span class="pill pill-open">Jun/2026</span>
+        </div>
+        <div style="margin-bottom:14px;">
+          <canvas id="donutChart" width="130" height="130" class="donut-canvas"></canvas>
+        </div>
+        <div class="bar-list">
+          <div class="bar-row">
+            <div class="bar-lbl">Custo de Vida</div>
+            <div class="bar-track"><div class="bar-fill" style="width:43%;background:#4f7cff"></div></div>
+            <div class="bar-val">R$ 1.174</div>
+            <div class="bar-pct">43%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-lbl">Dívida</div>
+            <div class="bar-track"><div class="bar-fill" style="width:30%;background:#f43f5e"></div></div>
+            <div class="bar-val">R$ 821</div>
+            <div class="bar-pct">30%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-lbl">Invest. Bike</div>
+            <div class="bar-track"><div class="bar-fill" style="width:21%;background:#14b8a6"></div></div>
+            <div class="bar-val">R$ 574</div>
+            <div class="bar-pct">21%</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-lbl">Imposto (MEI)</div>
+            <div class="bar-track"><div class="bar-fill" style="width:6%;background:#f59e0b"></div></div>
+            <div class="bar-val">R$ 165</div>
+            <div class="bar-pct">6%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Próximos vencimentos -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Próximos Vencimentos</div>
+          <a class="card-action" href="#">Ver todos <i class="ti ti-arrow-right" style="font-size:13px"></i></a>
+        </div>
+        <div class="txn-list">
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(244,63,94,.12);color:var(--red)">
+                <i class="ti ti-credit-card"></i>
+              </div>
+              <div>
+                <div class="txn-name">PicPay Stefanny</div>
+                <div class="txn-date">Dívida · 05/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val neg">−R$ 282,49</div>
+              <span class="pill pill-open">Em aberto</span>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(244,63,94,.12);color:var(--red)">
+                <i class="ti ti-device-mobile"></i>
+              </div>
+              <div>
+                <div class="txn-name">Telefone Stefanny</div>
+                <div class="txn-date">Parcela 9/18 · 05/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val neg">−R$ 342,00</div>
+              <span class="pill pill-open">Em aberto</span>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(245,158,11,.12);color:var(--amber)">
+                <i class="ti ti-heart"></i>
+              </div>
+              <div>
+                <div class="txn-name">Dízimo</div>
+                <div class="txn-date">Custo de Vida · 05/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val neg">−R$ 363,00</div>
+              <span class="pill pill-late">Atrasado</span>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(20,184,166,.12);color:var(--teal)">
+                <i class="ti ti-bike"></i>
+              </div>
+              <div>
+                <div class="txn-name">Bike Elétrica</div>
+                <div class="txn-date">Parcela 2/13 · 08/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val invest">R$ 574,00</div>
+              <span class="pill pill-invest">Invest.</span>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(245,158,11,.12);color:var(--amber)">
+                <i class="ti ti-receipt"></i>
+              </div>
+              <div>
+                <div class="txn-name">MEI + MEI Atrasado</div>
+                <div class="txn-date">Imposto · 20/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val neg">−R$ 165,82</div>
+              <span class="pill pill-open">Em aberto</span>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon" style="background:rgba(244,63,94,.12);color:var(--red)">
+                <i class="ti ti-credit-card"></i>
+              </div>
+              <div>
+                <div class="txn-name">NuBank — Empréstimo</div>
+                <div class="txn-date">Custo de Vida · 08/Jun</div>
+              </div>
+            </div>
+            <div class="txn-right">
+              <div class="txn-val neg">−R$ 241,32</div>
+              <span class="pill pill-open">Em aberto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Cartões + Metas + Evolução -->
+    <div class="section-row col-3">
+
+      <!-- Left: Cartões + Lançamentos recentes -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <!-- Cartões de crédito -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Cartões de Crédito</div>
+            <a class="card-action" href="#">Gerenciar <i class="ti ti-arrow-right" style="font-size:13px"></i></a>
+          </div>
+          <div class="cards-grid">
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">Inter</div>
+                <div class="cc-val zero">R$ 0,00</div>
+              </div>
+              <i class="ti ti-check-circle" style="color:var(--green);font-size:18px"></i>
+            </div>
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">PicPay Stefanny</div>
+                <div class="cc-val debt">R$ 463,00</div>
+              </div>
+              <i class="ti ti-alert-circle" style="color:var(--red);font-size:18px"></i>
+            </div>
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">Inter PJ</div>
+                <div class="cc-val zero">R$ 0,00</div>
+              </div>
+              <i class="ti ti-check-circle" style="color:var(--green);font-size:18px"></i>
+            </div>
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">Renner</div>
+                <div class="cc-val debt">R$ 173,45</div>
+              </div>
+              <i class="ti ti-alert-circle" style="color:var(--amber);font-size:18px"></i>
+            </div>
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">PicPay Davi</div>
+                <div class="cc-val debt">R$ 3,00</div>
+              </div>
+              <i class="ti ti-alert-circle" style="color:var(--amber);font-size:18px"></i>
+            </div>
+            <div class="cc-item">
+              <div>
+                <div class="cc-name">NuBank</div>
+                <div class="cc-val debt">R$ 400,00</div>
+              </div>
+              <i class="ti ti-alert-circle" style="color:var(--red);font-size:18px"></i>
+            </div>
+          </div>
+          <div class="cc-total">
+            <span class="cc-total-lbl">Total em aberto</span>
+            <span class="cc-total-val">R$ 1.039,45</span>
+          </div>
+        </div>
+
+        <!-- Lançamentos recentes -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Lançamentos Recentes</div>
+            <a class="card-action" href="#">Extrato <i class="ti ti-arrow-right" style="font-size:13px"></i></a>
+          </div>
+          <div class="txn-list">
+            <div class="txn-item">
+              <div class="txn-left">
+                <div class="txn-icon" style="background:rgba(34,197,94,.1);color:var(--green)">
+                  <i class="ti ti-building-bank"></i>
+                </div>
+                <div>
+                  <div class="txn-name">Salário</div>
+                  <div class="txn-date">03/Abr · Receita</div>
+                </div>
+              </div>
+              <div class="txn-right">
+                <div class="txn-val pos">+R$ 2.815,14</div>
+              </div>
+            </div>
+            <div class="txn-item">
+              <div class="txn-left">
+                <div class="txn-icon" style="background:rgba(79,124,255,.1);color:var(--accent)">
+                  <i class="ti ti-school"></i>
+                </div>
+                <div>
+                  <div class="txn-name">Wide FTV</div>
+                  <div class="txn-date">07/Abr · Receita extra</div>
+                </div>
+              </div>
+              <div class="txn-right">
+                <div class="txn-val pos">+R$ 262,50</div>
+              </div>
+            </div>
+            <div class="txn-item">
+              <div class="txn-left">
+                <div class="txn-icon" style="background:rgba(244,63,94,.1);color:var(--red)">
+                  <i class="ti ti-shopping-cart"></i>
+                </div>
+                <div>
+                  <div class="txn-name">Guanabara</div>
+                  <div class="txn-date">12/Abr · Mercado</div>
+                </div>
+              </div>
+              <div class="txn-right">
+                <div class="txn-val neg">−R$ 135,36</div>
+              </div>
+            </div>
+            <div class="txn-item">
+              <div class="txn-left">
+                <div class="txn-icon" style="background:rgba(244,63,94,.1);color:var(--red)">
+                  <i class="ti ti-tools-kitchen-2"></i>
+                </div>
+                <div>
+                  <div class="txn-name">Sunomono</div>
+                  <div class="txn-date">11/Abr · Restaurante</div>
+                </div>
+              </div>
+              <div class="txn-right">
+                <div class="txn-val neg">−R$ 192,50</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Metas de progresso -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Metas e Progresso</div>
+        </div>
+
+        <!-- Saldo projetado anual (mini sparkline) -->
+        <div style="margin-bottom:18px;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Evolução do Saldo</div>
+          <div class="chart-wrap">
+            <canvas id="sparkline"></canvas>
+          </div>
+        </div>
+
+        <div class="divider" style="margin-bottom:16px"></div>
+
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Objetivos</div>
+
+        <div class="ring-list">
+          <div class="ring-row">
+            <div class="ring-svg-wrap">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4.5"/>
+                <circle cx="26" cy="26" r="21" fill="none" stroke="#4f7cff" stroke-width="4.5"
+                  stroke-dasharray="131.9" stroke-dashoffset="75" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-center">43%</div>
+            </div>
+            <div class="ring-info">
+              <div class="ring-title">Depósito Meta Semanal</div>
+              <div class="ring-desc">R$ 43/sem · semana atual</div>
+            </div>
+          </div>
+
+          <div class="ring-row">
+            <div class="ring-svg-wrap">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4.5"/>
+                <circle cx="26" cy="26" r="21" fill="none" stroke="#14b8a6" stroke-width="4.5"
+                  stroke-dasharray="131.9" stroke-dashoffset="106" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-center">19%</div>
+            </div>
+            <div class="ring-info">
+              <div class="ring-title">Bike Elétrica</div>
+              <div class="ring-desc">Parcela 2/13 · R$ 574/mês</div>
+            </div>
+          </div>
+
+          <div class="ring-row">
+            <div class="ring-svg-wrap">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4.5"/>
+                <circle cx="26" cy="26" r="21" fill="none" stroke="#f59e0b" stroke-width="4.5"
+                  stroke-dasharray="131.9" stroke-dashoffset="18" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-center">86%</div>
+            </div>
+            <div class="ring-info">
+              <div class="ring-title">Quitação Telefone</div>
+              <div class="ring-desc">9/18 pagas · R$ 342/mês</div>
+            </div>
+          </div>
+
+          <div class="ring-row">
+            <div class="ring-svg-wrap">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4.5"/>
+                <circle cx="26" cy="26" r="21" fill="none" stroke="#f43f5e" stroke-width="4.5"
+                  stroke-dasharray="131.9" stroke-dashoffset="40" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-center">70%</div>
+            </div>
+            <div class="ring-info">
+              <div class="ring-title">Quitação MEI Atrasado</div>
+              <div class="ring-desc">R$ 79,77/mês · parcelado</div>
+            </div>
+          </div>
+
+          <div class="ring-row">
+            <div class="ring-svg-wrap">
+              <svg width="52" height="52" viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="4.5"/>
+                <circle cx="26" cy="26" r="21" fill="none" stroke="#22c55e" stroke-width="4.5"
+                  stroke-dasharray="131.9" stroke-dashoffset="92" stroke-linecap="round"/>
+              </svg>
+              <div class="ring-center">30%</div>
+            </div>
+            <div class="ring-info">
+              <div class="ring-title">Investimento Dólar</div>
+              <div class="ring-desc">R$ 300/mês · Revolut</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  // ── Donut Chart ──
+  (function() {
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Custo de Vida', 'Dívida', 'Invest. Bike', 'Imposto'],
+        datasets: [{
+          data: [1174.27, 821, 574, 165.82],
+          backgroundColor: ['#4f7cff', '#f43f5e', '#14b8a6', '#f59e0b'],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: false,
+        cutout: '72%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ' R$ ' + ctx.raw.toLocaleString('pt-BR', {minimumFractionDigits:2})
+            }
+          }
+        }
+      }
+    });
+  })();
+
+  // ── Sparkline Chart ──
+  (function() {
+    const ctx = document.getElementById('sparkline').getContext('2d');
+    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const receitas = [3100,2800,3700,4200,3600,3630,3630,3630,3630,3630,3630,3630];
+    const despesas = [2900,3100,3200,3400,3100,2735,2700,2600,2550,2500,2450,2400];
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 150);
+    gradient.addColorStop(0, 'rgba(79,124,255,0.25)');
+    gradient.addColorStop(1, 'rgba(79,124,255,0.0)');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          {
+            label: 'Receita',
+            data: receitas,
+            borderColor: '#4f7cff',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          },
+          {
+            label: 'Despesa',
+            data: despesas,
+            borderColor: '#f43f5e',
+            backgroundColor: 'transparent',
+            borderWidth: 1.5,
+            borderDash: [4,3],
+            fill: false,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1c2333',
+            borderColor: 'rgba(255,255,255,.1)',
+            borderWidth: 1,
+            titleColor: '#7a8096',
+            bodyColor: '#e8eaf0',
+            padding: 10,
+            callbacks: {
+              label: (ctx) => ' ' + ctx.dataset.label + ': R$ ' + ctx.raw.toLocaleString('pt-BR')
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,.04)' },
+            ticks: { color: '#7a8096', font: { size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,.04)' },
+            ticks: {
+              color: '#7a8096',
+              font: { size: 10 },
+              callback: (v) => 'R$' + (v/1000).toFixed(1) + 'k'
+            }
+          }
+        }
+      }
+    });
+  })();
+</script>
+</body>
+</html>
