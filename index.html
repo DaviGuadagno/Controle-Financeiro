@@ -389,14 +389,17 @@ function Lancamentos({lancamentos,categorias,contas}){
       const n=parseInt(item.numParcelas)||1;
       const vp=item.valor;
       const baseVenc=item.vencimento||item.data;
+      const baseFatura=item.faturaRef||curMonth();
       for(let i=0;i<n;i++){
         const venc=addMonthsDate(baseVenc,i);
+        const fatura=addM(baseFatura,i);
         await saveDoc("lancamentos",{
           tipo:item.tipo,descricao:item.descricao+" ("+(i+1)+"/"+n+")",
           valor:vp,categoriaId:item.categoriaId,contaId:item.contaId,
           data:venc,vencimento:venc,fixaVariavel:item.fixaVariavel,
           recorrente:false,paga:false,
-          parcelado:true,parcelaAtual:i+1,totalParcelas:n
+          parcelado:true,parcelaAtual:i+1,totalParcelas:n,
+          faturaRef:fatura
         });
       }
       setModal(null);
@@ -430,7 +433,7 @@ function Lancamentos({lancamentos,categorias,contas}){
             <td className="num muted">{fmtDate(x.data)}</td>
             <td style={{fontWeight:500}}>{x.descricao}{x.recorrente&&<span className="chip" style={{marginLeft:8}}>recorrente</span>}{x.parcelado&&<span className="chip" style={{marginLeft:8}}>{x.parcelaAtual}/{x.totalParcelas}</span>}</td>
             <td>{cat?<span style={{display:"flex",alignItems:"center",gap:7}}><span className="cat-dot" style={{background:cat.cor}}/>{cat.nome}</span>:"—"}</td>
-            <td>{conta?<span style={{display:"flex",alignItems:"center",gap:8}}><ContaLogo conta={conta} sm/><span style={{fontSize:12.5}}>{conta.nome}</span></span>:"—"}</td>
+            <td>{conta?<span style={{display:"flex",alignItems:"center",gap:8}}><ContaLogo conta={conta} sm/><span style={{fontSize:12.5}}>{conta.nome}{x.faturaRef&&<span className="chip" style={{marginLeft:6}}>fat. {mLabel(x.faturaRef)}</span>}</span></span>:"—"}</td>
             <td><span className={"badge "+(isRec?"pos":"neg")}>{isRec?"Receita":"Despesa"}{x.fixaVariavel==="fixa"?" · Fixa":" · Var."}</span></td>
             <td>{!isRec?<span className={"badge "+(x.paga?"pos":"neg")} style={{cursor:"pointer"}} onClick={()=>togglePaga(x)}>{x.paga?<><I n="check" s={12}/> Paga</>:<><I n="calendar_today" s={12}/> A pagar</>}</span>:"—"}</td>
             <td style={{textAlign:"right"}} className={"num "+(isRec?"pos":"neg")}><b>{isRec?"+":"−"}{fmt(x.valor)}</b></td>
@@ -442,16 +445,19 @@ function Lancamentos({lancamentos,categorias,contas}){
 }
 
 function LancModal({item,categorias,contas,onSave,onClose}){
-  const[f,setF]=useState({tipo:"despesa",descricao:"",valor:"",categoriaId:"",contaId:contas[0]?.id||"",data:todayISO(),fixaVariavel:"variavel",recorrente:false,paga:false,vencimento:todayISO(),parcelado:false,numParcelas:"2",...item});
+  const[f,setF]=useState({tipo:"despesa",descricao:"",valor:"",categoriaId:"",contaId:contas[0]?.id||"",data:todayISO(),fixaVariavel:"variavel",recorrente:false,paga:false,vencimento:todayISO(),parcelado:false,numParcelas:"2",faturaRef:curMonth(),...item});
   const ch=k=>e=>setF({...f,[k]:e.target.type==="checkbox"?e.target.checked:e.target.value});
   const cats=categorias.filter(c=>c.tipo===f.tipo||c.tipo==="ambos");
   const isEdit=!!item.id;
+  const contaSel=contas.find(c=>c.id===f.contaId);
+  const isCartao=contaSel?.tipo==="cartao";
   const valorParcela=f.parcelado?num(f.valor):0;
   const totalParcelado=f.parcelado?valorParcela*(parseInt(f.numParcelas)||1):0;
   return(<Modal title={isEdit?"Editar lançamento":"Novo lançamento"} sub="Dados da movimentação" onClose={onClose} wide>
     <div className="row2" style={{marginBottom:16}}>{["receita","despesa"].map(t=><div key={t} className={"filter-chip"+(f.tipo===t?" active":"")} style={{textAlign:"center",flex:1,padding:"12px 0"}} onClick={()=>setF({...f,tipo:t,categoriaId:""})}><I n={t==="receita"?"arrow_upward":"arrow_downward"} s={14}/> {t==="receita"?"Receita":"Despesa"}</div>)}</div>
     <Field label="Descrição"><input className="input" value={f.descricao} onChange={ch("descricao")} placeholder="Ex: Salário, Mercado..." autoFocus/></Field>
-    <div className="row2"><Field label="Categoria"><select className="select" value={f.categoriaId} onChange={ch("categoriaId")}><option value="">Selecione</option>{cats.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select></Field><Field label="Conta / Cartão"><select className="select" value={f.contaId} onChange={ch("contaId")}><option value="">Selecione</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select></Field></div>
+    <div className="row2"><Field label="Categoria"><select className="select" value={f.categoriaId} onChange={ch("categoriaId")}><option value="">Selecione</option>{cats.map(c=><option key={c.id} value={c.id}>{c.nome}</option>)}</select></Field><Field label="Conta / Cartão"><select className="select" value={f.contaId} onChange={ch("contaId")}><option value="">Selecione</option>{contas.map(c=><option key={c.id} value={c.id}>{c.nome}{c.tipo==="cartao"?" (Cartão)":""}</option>)}</select></Field></div>
+    {isCartao&&<Field label="Mês da fatura"><input type="month" className="input" value={f.faturaRef||curMonth()} onChange={ch("faturaRef")}/></Field>}
     {!isEdit&&f.tipo==="despesa"&&<label style={{display:"flex",alignItems:"center",gap:9,fontSize:13,color:"var(--muted)",cursor:"pointer",margin:"4px 0 15px"}}><input type="checkbox" checked={f.parcelado} onChange={ch("parcelado")} style={{width:16,height:16,accentColor:"var(--gold)"}}/> Compra parcelada</label>}
     {f.parcelado&&!isEdit?<>
       <div className="row2">
@@ -462,11 +468,11 @@ function LancModal({item,categorias,contas,onSave,onClose}){
       {f.valor&&f.numParcelas&&<div className="alert-strip warn" style={{marginBottom:15}}><I n="receipt_long" s={16}/><span>{f.numParcelas}x de {fmt(num(f.valor))} = <b>total {fmt(totalParcelado)}</b> · vencimentos de {fmtDate(f.vencimento)} a {fmtDate(addMonthsDate(f.vencimento,(parseInt(f.numParcelas)||1)-1))}</span></div>}
     </>:<>
       <div className="row2"><Field label="Valor (R$)"><input className="input num" value={f.valor} onChange={ch("valor")} placeholder="0,00"/></Field><Field label="Data"><input type="date" className="input" value={f.data} onChange={ch("data")}/></Field></div>
-      {f.tipo==="despesa"&&<Field label="Vencimento"><input type="date" className="input" value={f.vencimento||""} onChange={ch("vencimento")}/></Field>}
+      {f.tipo==="despesa"&&!isCartao&&<Field label="Vencimento"><input type="date" className="input" value={f.vencimento||""} onChange={ch("vencimento")}/></Field>}
     </>}
     <div className="row2"><Field label="Fixa / Variável"><select className="select" value={f.fixaVariavel} onChange={ch("fixaVariavel")}><option value="fixa">Fixa</option><option value="variavel">Variável</option></select></Field>{f.tipo==="despesa"&&!f.parcelado&&<Field label="Status"><select className="select" value={f.paga?"1":"0"} onChange={e=>setF({...f,paga:e.target.value==="1"})}><option value="0">A pagar</option><option value="1">Paga</option></select></Field>}</div>
     {!f.parcelado&&<label style={{display:"flex",alignItems:"center",gap:9,fontSize:13,color:"var(--muted)",cursor:"pointer",margin:"4px 0 20px"}}><input type="checkbox" checked={f.recorrente} onChange={ch("recorrente")} style={{width:16,height:16,accentColor:"var(--gold)"}}/> Recorrente (mensal)</label>}
-    <div style={{display:"flex",gap:10,marginTop:f.parcelado?16:0}}><button className="btn" style={{flex:1}} onClick={onClose}>Cancelar</button><button className="btn btn-primary" style={{flex:1}} onClick={()=>f.descricao&&f.valor&&onSave({...f,valor:num(f.valor)})}>{f.parcelado&&!isEdit?"Criar "+f.numParcelas+" parcelas":"Salvar"}</button></div>
+    <div style={{display:"flex",gap:10,marginTop:f.parcelado?16:0}}><button className="btn" style={{flex:1}} onClick={onClose}>Cancelar</button><button className="btn btn-primary" style={{flex:1}} onClick={()=>f.descricao&&f.valor&&onSave({...f,valor:num(f.valor),faturaRef:isCartao?(f.faturaRef||curMonth()):null})}>{f.parcelado&&!isEdit?"Criar "+f.numParcelas+" parcelas":"Salvar"}</button></div>
   </Modal>);
 }
 
